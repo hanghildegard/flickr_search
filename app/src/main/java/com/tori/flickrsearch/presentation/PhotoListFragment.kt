@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
+import com.squareup.picasso.Picasso
 import com.tori.flickrsearch.databinding.PhotolistFragmentBinding
 import java.lang.IllegalStateException
 
 import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 
 class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), PhotoListView {
 
@@ -33,10 +35,14 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     }
 
     override fun createPresenter(): PhotoListPresenter {
-        return PhotoListPresenter(get())
+        return PhotoListPresenter(get(), inject())
     }
 
     override fun showResponse(response: String) {
-        binding.responseTextview.text = response
+        //binding.responseTextview.text = response
+    }
+
+    override fun showImage(url: String) {
+        presenter.loadImage(url, binding.testImageView)
     }
 }

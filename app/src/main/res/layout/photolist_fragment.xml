@@ -7,13 +7,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/padding_large">
 
-        <!-- Temporary view for first stage: displaying dumped response -->
-        <TextView
-            android:id="@+id/response_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+        <!-- Temporary view for displaying a single image -->
+       <ImageView
+           android:id="@+id/test_image_view"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:scaleType="center"
+           android:adjustViewBounds="true" />
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

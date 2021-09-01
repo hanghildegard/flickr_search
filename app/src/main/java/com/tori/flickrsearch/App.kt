@@ -10,7 +10,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(networkModule, photoSearchModule)
+            modules(networkModule, photoSearchModule, picassoModule)
         }
     }
 }

@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
-import com.squareup.picasso.Picasso
 import com.tori.flickrsearch.databinding.PhotolistFragmentBinding
+import com.tori.flickrsearch.presentation.adapter.PhotoAdapterItem
+import com.tori.flickrsearch.presentation.adapter.PhotoListAdapter
 import java.lang.IllegalStateException
 
 import org.koin.android.ext.android.get
@@ -18,12 +21,27 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     internal val binding: PhotolistFragmentBinding
         get() = _binding ?: throw IllegalStateException()
 
+    private lateinit var photoListAdapter: PhotoListAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        photoListAdapter = PhotoListAdapter(ArrayList(), inject())
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = PhotolistFragmentBinding.inflate(inflater, container, false)
+
+        val lm = LinearLayoutManager(requireContext())
+        lm.orientation = RecyclerView.VERTICAL
+
+        with(binding.photolistRecyclerview) {
+            layoutManager = lm
+            adapter = photoListAdapter
+        }
 
         return binding.root
     }
@@ -35,14 +53,11 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     }
 
     override fun createPresenter(): PhotoListPresenter {
-        return PhotoListPresenter(get(), inject())
+        return PhotoListPresenter(get())
     }
 
-    override fun showResponse(response: String) {
-        //binding.responseTextview.text = response
-    }
-
-    override fun showImage(url: String) {
-        presenter.loadImage(url, binding.testImageView)
+    override fun showItems(items: List<PhotoAdapterItem>) {
+        photoListAdapter.setItems(items)
+        photoListAdapter.notifyDataSetChanged()
     }
 }

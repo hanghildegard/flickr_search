@@ -28,7 +28,7 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     internal val binding: PhotolistFragmentBinding
         get() = _binding ?: throw IllegalStateException()
 
-    private lateinit var photoListAdapter: PhotoListAdapter
+    private var photoListAdapter: PhotoListAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +60,7 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
             setOnEditorActionListener { editText, actionsId, keyEvent ->
                 if (actionsId == EditorInfo.IME_ACTION_SEARCH ||
                     (keyEvent?.action == KeyEvent.ACTION_DOWN && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    presenter.fetchPhotos(editText.text.toString())
+                    presenter.onSearchClicked(editText.text.toString())
 
                     view?.let {
                         val inputMethodManager = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -82,6 +82,12 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     override fun onSaveInstanceState(outState: Bundle) {
         presenter.saveInstanceState(outState)
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        photoListAdapter = null
+        _binding = null
     }
 
     override fun createPresenter(): PhotoListPresenter {
@@ -109,13 +115,13 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
     }
 
     override fun clearItems() {
-        photoListAdapter.clear()
-        photoListAdapter.notifyDataSetChanged()
+        photoListAdapter?.clear()
+        photoListAdapter?.notifyDataSetChanged()
     }
 
     override fun showItems(items: List<PhotoAdapterItem>) {
-        photoListAdapter.setItems(items)
-        photoListAdapter.notifyDataSetChanged()
+        photoListAdapter?.setItems(items)
+        photoListAdapter?.notifyDataSetChanged()
     }
 
     companion object {

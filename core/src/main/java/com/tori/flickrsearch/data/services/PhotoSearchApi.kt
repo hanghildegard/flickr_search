@@ -12,6 +12,8 @@ interface PhotoSearchApi {
     fun searchPhotos(
         @Query("method") method: String = "flickr.photos.search",
         @Query("text") text: String,
+        @Query("media") media: String = "photos",
+        @Query("page") page: Int = 1,
         @Query("format") format: String = "json",
         @Query("nojsoncallback") noJsonCallback: Int = 1
     ): Single<PhotoResponse>

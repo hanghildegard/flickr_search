@@ -31,6 +31,12 @@ class PhotoListPresenter(
 
     fun onSearchTextChanged(text: String?) {
         searchText = text
+        if (text.isNullOrEmpty()) {
+            clearPhotoList()
+        }
+    }
+
+    fun onSearchClicked(text: String?) {
         if (!text.isNullOrEmpty()) {
             fetchPhotos(text)
         } else {

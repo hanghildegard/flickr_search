@@ -1,21 +1,26 @@
 package com.tori.flickrsearch.presentation.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.tori.flickrsearch.R
+import com.tori.flickrsearch.databinding.PhotolistItemBinding
 
-class PhotoListAdapter(private val dataSet: MutableList<PhotoAdapterItem>, private val picasso: Lazy<Picasso>) : RecyclerView.Adapter<PhotoListAdapter.ViewHolder>() {
+class PhotoListAdapter(
+    private val dataSet: MutableList<PhotoAdapterItem>,
+    private val picasso: Lazy<Picasso>
+) : RecyclerView.Adapter<PhotoListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.photolist_item, parent, false)
-
-        return ViewHolder(view)
+        return ViewHolder(
+            PhotolistItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -46,15 +51,15 @@ class PhotoListAdapter(private val dataSet: MutableList<PhotoAdapterItem>, priva
         dataSet.clear()
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(binding: PhotolistItemBinding) : RecyclerView.ViewHolder(binding.root) {
         val imageView: ImageView
         val titleTextView: TextView
         val ownerTextView: TextView
 
         init {
-            imageView = view.findViewById(R.id.listitem_imageview)
-            titleTextView = view.findViewById(R.id.listitem_title_textview)
-            ownerTextView = view.findViewById(R.id.listitem_owner_textview)
+            imageView = binding.listitemImageview
+            titleTextView = binding.listitemTitleTextview
+            ownerTextView = binding.listitemOwnerTextview
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.tori.flickrsearch.presentation.photolist
 
+import android.os.Bundle
 import com.hannesdorfmann.mosby3.mvp.MvpNullObjectBasePresenter
+import com.tori.flickrsearch.R
 import com.tori.flickrsearch.data.services.PhotoSearchService
 import com.tori.flickrsearch.domain.Photo
 import com.tori.flickrsearch.domain.PhotoResponse
@@ -9,6 +11,7 @@ import com.tori.flickrsearch.presentation.adapter.PhotoAdapterItem
 import com.tori.flickrsearch.utils.FlickrUrlUtil
 import kotlinx.coroutines.*
 import java.lang.Exception
+import java.net.URLEncoder
 import kotlin.coroutines.resumeWithException
 
 class PhotoListPresenter(
@@ -18,35 +21,67 @@ class PhotoListPresenter(
 ) : MvpNullObjectBasePresenter<PhotoListView>(), CoroutineScope by CoroutineScope(mainDispatcher) {
 
     private var searchPhotoJob: Job? = null
+    private var searchText: String? = null
 
-    fun fetchPhotos(text: String?) {
-        if (!text.isNullOrEmpty()) {
-            searchPhotoJob = launch {
-                view.showLoading(true)
-                try {
-                    parseResponse(searchPhotos(text))
-
-                } catch (e: Exception) {
-                    view.showLoading(false)
-                    view.showError(true)
-                }
-            }
-        } else {
-
+    fun onViewCreated(searchText: String?) {
+        if (!searchText.isNullOrEmpty()) {
+            fetchPhotos(searchText)
         }
     }
 
-    private suspend fun parseResponse(response: PhotoResponse) {
-        coroutineScope {
-            val listItems = response.photos.photo.map { photo ->
-                async { getPhotoItem(photo, getUserInfo(photo.owner)) }
-            }
-                .awaitAll()
-                .toList()
-            withContext(mainDispatcher) {
+    fun onSearchTextChanged(text: String?) {
+        searchText = text
+        if (!text.isNullOrEmpty()) {
+            fetchPhotos(text)
+        } else {
+            clearPhotoList()
+        }
+    }
+
+    fun fetchPhotos(text: String) {
+        searchPhotoJob = launch {
+            view.showContent(false)
+            view.showEmpty(false)
+            view.showLoading(true)
+            try {
+                parseResponse(searchPhotos(URLEncoder.encode(text, "UTF-8")))
+
+            } catch (e: Exception) {
                 view.showLoading(false)
-                view.showItems(listItems)
+                view.showError(true)
             }
+        }
+    }
+
+    fun clearPhotoList() {
+        view.clearItems()
+        view.showContent(false)
+        view.updateEmptyLabel(R.string.empty_text)
+        view.showEmpty(true)
+    }
+
+    fun saveInstanceState(outState: Bundle) {
+        outState.putString(PhotoListFragment.KEY_SEARCH_TEXT, searchText)
+    }
+
+    private suspend fun parseResponse(response: PhotoResponse) {
+        if (response.photos.photo.isNotEmpty()) {
+            coroutineScope {
+                val listItems = response.photos.photo.map { photo ->
+                    async { getPhotoItem(photo, getUserInfo(photo.owner)) }
+                }
+                    .awaitAll()
+                    .toList()
+                withContext(mainDispatcher) {
+                    view.showLoading(false)
+                    view.showContent(true)
+                    view.showItems(listItems)
+                }
+            }
+        } else {
+            view.showLoading(false)
+            view.updateEmptyLabel(R.string.no_result_text)
+            view.showEmpty(true)
         }
     }
 

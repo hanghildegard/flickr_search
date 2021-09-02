@@ -4,6 +4,8 @@
     android:id="@+id/listitem_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="0dp"
+    android:layout_marginRight="0dp"
     android:layout_marginBottom="@dimen/margin_large"
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/card_corner_radius"

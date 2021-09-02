@@ -56,6 +56,11 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
         return PhotoListPresenter(get())
     }
 
+    override fun clearItems() {
+        photoListAdapter.clear()
+        photoListAdapter.notifyDataSetChanged()
+    }
+
     override fun showItems(items: List<PhotoAdapterItem>) {
         photoListAdapter.setItems(items)
         photoListAdapter.notifyDataSetChanged()

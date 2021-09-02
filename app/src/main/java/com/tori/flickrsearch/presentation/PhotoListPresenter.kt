@@ -22,10 +22,13 @@ class PhotoListPresenter(
     fun fetchPhotos(text: String?) {
         if (!text.isNullOrEmpty()) {
             searchPhotoJob = launch {
+                view.showLoading(true)
                 try {
                     parseResponse(searchPhotos(text))
 
                 } catch (e: Exception) {
+                    view.showLoading(false)
+                    view.showError(true)
                 }
             }
         } else {
@@ -41,6 +44,7 @@ class PhotoListPresenter(
                 .awaitAll()
                 .toList()
             withContext(mainDispatcher) {
+                view.showLoading(false)
                 view.showItems(listItems)
             }
         }

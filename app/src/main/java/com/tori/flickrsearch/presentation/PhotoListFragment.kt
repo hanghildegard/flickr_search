@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.mosby3.mvp.MvpFragment
@@ -54,6 +55,18 @@ class PhotoListFragment : MvpFragment<PhotoListView, PhotoListPresenter>(), Phot
 
     override fun createPresenter(): PhotoListPresenter {
         return PhotoListPresenter(get())
+    }
+
+    override fun showContent(show: Boolean) {
+        binding.photolistContent.isVisible = show
+    }
+
+    override fun showLoading(show: Boolean) {
+        binding.photolistLoadingView.isVisible = show
+    }
+
+    override fun showError(show: Boolean) {
+        binding.photolistErrorView.root.isVisible = show
     }
 
     override fun clearItems() {

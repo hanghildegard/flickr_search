@@ -13,4 +13,9 @@ class App : Application() {
             modules(networkModule, photoSearchModule, picassoModule)
         }
     }
+
+    override fun onTerminate() {
+        unload()
+        super.onTerminate()
+    }
 }

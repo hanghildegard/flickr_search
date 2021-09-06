@@ -9,7 +9,9 @@ import com.tori.flickrsearch.network.AuthInterceptor
 import com.tori.flickrsearch.network.RetrofitFactory
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.stopKoin
 import org.koin.dsl.module
+import org.koin.java.KoinJavaComponent.inject
 
 val networkModule = module {
     factory { AuthInterceptor() }
@@ -29,6 +31,10 @@ val picassoModule = module {
     }
 }
 
+fun unload() {
+    with(inject<Picasso>(Picasso::class.java)) { if (isInitialized()) value.shutdown() }
+    stopKoin()
+}
 
 private fun okHttp3Downloader(client: OkHttpClient) = OkHttp3Downloader(client)
 private fun picasso(context: Context, downloader: OkHttp3Downloader) =
